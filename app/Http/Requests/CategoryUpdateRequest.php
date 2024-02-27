@@ -28,7 +28,7 @@ class CategoryUpdateRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'unique:categories',
+                "unique:categories,slug,{$this->category->id}",
                 new ValidSlug,
             ],
         ];

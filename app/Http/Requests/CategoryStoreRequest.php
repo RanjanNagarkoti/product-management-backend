@@ -28,7 +28,7 @@ class CategoryStoreRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'unique:categories',
+                'unique:categories,slug',
                 new ValidSlug,
             ],
         ];
