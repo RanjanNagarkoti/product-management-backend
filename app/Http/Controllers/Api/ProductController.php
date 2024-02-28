@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Http\Resources\ProductResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductFilterRequest;
 use Illuminate\Http\Response;
 
 class ProductController extends Controller
@@ -25,12 +26,14 @@ class ProductController extends Controller
     }
 
     /**
+     * @param ProductFilterRequest $request
      * @return AnonymousResourceCollection
      */
-    public function index(): AnonymousResourceCollection
+    public function index(ProductFilterRequest $request): AnonymousResourceCollection
     {
-        $data = Product::with('categories:id,title')->paginate(12);
-        return ProductResource::collection($data);
+        $data = $request->validated();
+        $product = $this->productRepository->getFilteredProducts($data);
+        return ProductResource::collection($product);
     }
 
     /**
