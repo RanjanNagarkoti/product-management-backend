@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
+use Illuminate\Http\Response;
 
 class ProductRepository
 {
@@ -71,7 +72,7 @@ class ProductRepository
     public function update(Product $product, array $data): Product
     {
         if (isset($data['thumbnail'])) {
-            Storage::delete('app/images/products/' . $product->thumbnail);
+            unlink(storage_path('app/' . $product->thumbnail));
             $name = date('ymd') . time() . '.' . $data['thumbnail']->extension();
             $data['thumbnail'] = $data['thumbnail']->storeAs('images/products', $name);
         }
@@ -79,5 +80,17 @@ class ProductRepository
         $product->update($data);
 
         return $product;
+    }
+
+
+    /**
+     * @param Product $product
+     * @return Response
+     */
+    public function destroy(Product $product): Response
+    {
+        unlink(storage_path('app/' . $product->thumbnail));
+        $product->delete();
+        return response()->noContent();
     }
 }
